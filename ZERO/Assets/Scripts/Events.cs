@@ -1,9 +1,10 @@
 
 
 
-/* ETController delegates */
+/* ZERO delegates */
 
 public delegate void ET_NewSampleAvailable_Event(SampleData sd);
+public delegate void ET_WriteMessageToGazeFile(string msg);
 public delegate void ET_Started_Event();
 public delegate void ET_Stopped_Event();
 public delegate void ET_SampleHarvesterThread_Started_Event();

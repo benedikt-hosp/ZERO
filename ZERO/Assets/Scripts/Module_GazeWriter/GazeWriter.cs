@@ -16,7 +16,7 @@ public class GazeWriter
     private int saveGazePeriod = 2;                                         // define the period, the script should save gaze samples to file    
 
 
-    string header = "System Timestamp\t Device Timestamp \t Camera Position X\t Camera Position y\t Camera position z\t" +
+    string header = "System Timestamp\t Device Timestamp \t Message \t Camera Position X\t Camera Position y\t Camera position z\t" +
                     "Camera Rotation x\t Camera Rotation y\t Camera Rotation z\t" +
                     "Eye\t Valid \t isBlinkLeft \t isBlinkRight\t " +
                     "Local Gaze Origin X\t" + "Local Gaze Origin Y\t" + "Local Gaze Origin Z\t" +
@@ -29,9 +29,11 @@ public class GazeWriter
                     "Accuracy \t" + "Precision";
 
 
+
+
     private bool isWritingGazeFile;
 
-    public GazeWriter(string userFolder, EyeTrackingProviderInterface eyeTrackerObject)
+    public GazeWriter(string userFolder, Example_Zero example_Zero, EyeTrackingProviderInterface eyeTrackerObject)
     {
         _mb = GameObject.FindObjectOfType<MonoBehaviour>();
 
@@ -43,8 +45,17 @@ public class GazeWriter
         this.gazeStreamWriter.WriteLine(header);
         this.gazeStreamWriter.Flush();
 
+
+        example_Zero.etMSG2File += writeMessageToFile;
+
     }
 
+    private void writeMessageToFile(string msg)
+    {
+        string sampleLine = this.getCurrentSystemTimestamp().ToString() + "\t" + "-\t" + msg+ "\n";
+        this.gazeStreamWriter.WriteLine(sampleLine);
+        this.gazeStreamWriter.Flush();
+    }
 
     public void startGazeWriting()
     {
@@ -74,6 +85,7 @@ public class GazeWriter
             yield return new WaitForSeconds(this.saveGazePeriod);
 
         }
+        this.gazeStreamWriter.Close();
     }
 
     public long getCurrentSystemTimestamp()
@@ -93,7 +105,7 @@ public class GazeWriter
 
     private void WriteGazeData(SampleData gazeData)
     {
-            string sampleLine = gazeData.systemTimeStamp.ToString() + "\t" + gazeData.deviceTimestamp.ToString() + "\t" +
+            string sampleLine = gazeData.systemTimeStamp.ToString() + "\t" + gazeData.deviceTimestamp.ToString() + "\t" + "sample \t" +
                 gazeData.cameraPosition.x.ToString() + "\t" + gazeData.cameraPosition.y.ToString() + "\t" + gazeData.cameraPosition.z.ToString() + "\t" +
                 gazeData.cameraRotation.x.ToString() + "\t" + gazeData.cameraRotation.y.ToString() + "\t" + gazeData.cameraRotation.z.ToString() + "\t" +
 
@@ -115,20 +127,5 @@ public class GazeWriter
 
     }
      
-
-    internal void Close()
-    {
-        // write remaining samples to file before deleting the objects.
-        m_EyeTrackingProvider.GetGazeQueue();
-        currentSamples = m_EyeTrackingProvider.getCurrentSamples;
-
-
-        if (currentSamples != null)
-        {
-            WriteGazeToFile(currentSamples);
-
-        }
-        this.gazeStreamWriter.Close();
-    }
 }
 
