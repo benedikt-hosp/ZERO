@@ -124,42 +124,32 @@ public class EyeTrackingProviderController
     public bool Calibrate()
     {
         bool success = false;
-        Debug.Log("ETController: started calibration");
+        Debug.Log("ZERO: started calibration");
         if (eyeTrackingProviderInterface != null)
         {
             success = eyeTrackingProviderInterface.Calibrate();
         }
-
         return success;
-
-
     }
 
-    public void startETThread()
+    public void StartET()
     {
-        eyeTrackingProviderInterface.StartSampleHarvesterThread();
-    }
-
-    public void stopETThread()
-    {
-        eyeTrackingProviderInterface.StopSampleHarvesterThread();
-    }
-
-    public void close()
-    {
-        eyeTrackingProviderInterface.Close();
-    }
-
-    public bool SubscribeToGaze()
-    {
-        Debug.Log("Subscribed to gaze signal.");
+        Debug.Log("Subscribing to gaze signal.");
 
         bool registrered = eyeTrackingProviderInterface.SubscribeToGazeData();
         if (!registrered)
             Debug.LogWarning("Could not subscribe to gaze");
-        return registrered;
-            
+        
+        eyeTrackingProviderInterface.StartSampleHarvesterThread();
     }
+
+    public void CloseET()
+    {
+        eyeTrackingProviderInterface.StopSampleHarvesterThread();
+        eyeTrackingProviderInterface.Close();
+    }
+
+  
 
     
 }
