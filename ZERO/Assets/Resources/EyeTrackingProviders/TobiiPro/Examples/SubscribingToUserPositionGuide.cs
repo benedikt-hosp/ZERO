@@ -5,9 +5,9 @@ using UnityEngine;
 
 namespace Tobii.Research.Unity.CodeExamples
 {
-    // the events in the SDK are called on a thread internal to the SDK. That thread can not safely set values
-    // that are to be read on the main thread. The simplest way to make it safe is to enqueue the date, and dequeue it
-    // on the main thread, e.g. via Update() in a MonoBehaviour.
+    // the events in the SDK are called on a depthMapRecordingThread internal to the SDK. That depthMapRecordingThread can not safely set values
+    // that are to be read on the main depthMapRecordingThread. The simplest way to make it safe is to enqueue the date, and dequeue it
+    // on the main depthMapRecordingThread, e.g. via Update() in a MonoBehaviour.
     class SubscribingToUserPositionGuide : MonoBehaviour
     {
         private IEyeTracker _eyeTracker;
@@ -58,8 +58,8 @@ namespace Tobii.Research.Unity.CodeExamples
             EyeTrackingOperations.Terminate();
         }
 
-        // This method will be called on a thread belonging to the SDK, and can not safely change values
-        // that will be read from the main thread.
+        // This method will be called on a depthMapRecordingThread belonging to the SDK, and can not safely change values
+        // that will be read from the main depthMapRecordingThread.
         private void EnqueueUserPositionGuide(object sender, UserPositionGuideEventArgs e)
         {
             lock (_queue)
@@ -86,7 +86,7 @@ namespace Tobii.Research.Unity.CodeExamples
             }
         }
 
-        // This method will be called on the main Unity thread
+        // This method will be called on the main Unity depthMapRecordingThread
         private void HandleUserPositionGuide(UserPositionGuideEventArgs e)
         {
             // Do something with user position guide

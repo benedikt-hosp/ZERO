@@ -8,36 +8,57 @@ using System.Linq;
 
 using static EyeTrackingProviderInterface;
 using System.Collections;
+using System.Collections.Concurrent;
+using ViveSR.anipal.Eye;
 
 public class TobiiProProvider : EyeTrackingProviderInterface
 {
-     // TOBII PRO SPECIFIC
+
+    public static event OnCalibrationStarted OnCalibrationStartedEvent;
+    public static event OnCalibrationSucceeded OnCalibrationSucceededEvent;
+    public static event OnCalibrationFailed OnCalibrationFailedEvent;
+
+    public event OnAutoIPDCalibrationStarted OnAutoIPDCalibrationStartedEvent;
+    public event OnAutoIPDCalibrationSucceeded OnAutoIPDCalibrationSucceededEvent;
+    public event OnAutoIPDCalibrationFailed OnAutoIPDCalibrationFailedEvent;
+
+    public event NewGazeSampleReady NewGazesampleReady;
+    public event OnCalibrationStarted OnCalibrationStartedEventObj;
+    public event OnCalibrationSucceeded OnCalibrationSucceededEventObj;
+    public event OnCalibrationFailed OnCalibrationFailedEventObj;
+
+
+    // Eye Tracking Interface
+    private bool isReady = false;
+    private bool isCalibrationRunning = false;
+    public bool etIsReady { get { return isReady; } }
+    public bool isCalibrating { get { return isCalibrationRunning; } set { this.isCalibrationRunning = value; } }
+    public List<SampleData> getCurrentSamples { get { return gazeSamplesOfCP; } }
+    ConcurrentQueue<SampleData> gazeQueue;
+    public List<SampleData> gazeSamplesOfCP;
+    public MonoBehaviour _mb = GameObject.FindObjectOfType<MonoBehaviour>();
+    // The surrogate MonoBehaviour that we'll use to manage this coroutine.
+    SampleData _sampleData;
+
+    bool queueGazeSignal = false;
+    bool isHarvestingGaze = false;
+
+
+    // TOBII PRO SPECIFIC
     public VRCalibration calibration = VRCalibration.Instance;
     public VREyeTracker _eyeTracker;
 
-
-
-    /* Events */
-    public event ET_NewSampleAvailable_Event ET_NewSampleAvailable_Event;
-    public event ET_Started_Event ET_Started_Event;
-    public event ET_Stopped_Event ET_Stopped_Event;
-    public event ET_SampleHarvesterThread_Started_Event ET_SampleHarvesterThread_Started_Event;
-    public event ET_SampleHarvesterThread_Stopped_Event ET_SampleHarvesterThread_Stopped_Event;
-    public event ET_Calibration_Started_Event ET_Calibration_Started_Event;
-    public event ET_Calibration_Succeded_Event ET_Calibration_Succeded_Event;
-    public event ET_Calibration_Failed_Event ET_Calibration_Failed_Event;
-
-    public bool InitializeDevice()
+    public bool initializeDevice()
     {
-        _mb = GameObject.FindObjectOfType<MonoBehaviour>();
+        this._mb = GameObject.FindObjectOfType<MonoBehaviour>();
 
         _sampleData = new SampleData();
-        _eyeTracker = VREyeTracker.Instance;
-        ET_Started_Event?.Invoke();                         // Raise event                         // Raise event
-        gazeQueue = new Queue<SampleData>();
+        this._eyeTracker = VREyeTracker.Instance;
+        gazeQueue = new ConcurrentQueue<SampleData>();
+        this.isReady = true;
 
 
-        if (_eyeTracker == null)
+        if (this._eyeTracker == null)
         {
             Debug.LogError("Provider Tobii Pro could not connect to an eye tracker.");
 
@@ -52,160 +73,132 @@ public class TobiiProProvider : EyeTrackingProviderInterface
         }
        
     }
-
-    public void ClearQueue()
+    public void clearQueue()
     {
         // clear queue
         gazeQueue.Clear();
     }
 
-    public void GetGazeQueue()
+    public void getGazeQueue()
     {
-        gazeSamplesOfCP = gazeQueue.ToList();
-        ClearQueue();
+        this.gazeSamplesOfCP = this.gazeQueue.ToList();
+        this.clearQueue();
 
     }
 
-    public SampleData GetGazeLive()
+    public void calibrateET()
     {
-        SampleData sampleData = gazeQueue.Dequeue();
-        return sampleData;
-    }
 
-    public bool Calibrate()
-    {
-        ET_Calibration_Started_Event?.Invoke();
-        IsCalibrating = true;
+        bool calibrated = false;
+
+        Debug.Log("TobiiProProvider started calibration.");
+        isCalibrating = true;
+        OnCalibrationStartedEvent?.Invoke();
+        OnCalibrationStartedEventObj?.Invoke();
+        isCalibrating = true;
         var calibrationStartResult = calibration.StartCalibration(
                 resultCallback: (calibrationResult) =>
-                    Debug.Log("Calibration was " + (calibrationResult ? "successful" : "unsuccessful"))
+                calibrated = calibrationResult
                 );
 
-        IsCalibrating = false;
-        if (calibrationStartResult)
-        {
-            ET_Calibration_Succeded_Event?.Invoke();
+
+        Debug.Log("Calibration was " + (calibrated ? "successful" : "unsuccessful"));
+
+        if (calibrated)
+        { 
+            OnCalibrationSucceededEventObj?.Invoke();
+            OnCalibrationSucceededEvent?.Invoke();
         }
         else
         {
-            ET_Calibration_Failed_Event?.Invoke();
+            OnCalibrationFailedEventObj?.Invoke();
+            OnCalibrationFailedEvent?.Invoke();
         }
+        isCalibrating = false;
+        
 
-        return calibrationStartResult;
 
     }
 
-    public void Close()
+    public void close()
     {
-
+        isHarvestingGaze = false;
+        this._eyeTracker = null;
         EyeTrackingOperations.Terminate();
-        _eyeTracker = null;
-        calibration = null;
-        ET_Stopped_Event?.Invoke();
+        this.calibration = null;
     }
 
-    IEnumerator GetGaze()
+    public void stopETThread()
     {
-        while (isHaversterThreadRunning)
+        isHarvestingGaze = false;
+    }
+
+    public void startETThread()
+    {
+        isHarvestingGaze = true;
+        this._mb.StartCoroutine(getGaze());
+    }
+
+    IEnumerator getGaze()
+    {
+        while (isHarvestingGaze)
         {
-            // In this script we are collecting the original gaze samples.
-            // Tobii allows to access "processed" gaze samples, but do not mention what that means.
-            // By using the original gaze we have access to more features.
-            // If you need help by switching to the processed data contact me ;)
-            //var data = _eyeTracker.LatestGazeData;             
-            var data = _eyeTracker.NextData;
-            _sampleData = new SampleData();
+       
+            var data = this._eyeTracker.NextData;             
+            this._sampleData = new SampleData();
             
-            if(data != default(IVRGazeData) && data != null && data.OriginalGaze != null)
+            if(data != default(IVRGazeData) && data != null)
             {
-                _sampleData.systemTimeStamp = data.OriginalGaze.SystemTimeStamp;
-                _sampleData.deviceTimestamp = data.OriginalGaze.DeviceTimeStamp;
+                _sampleData.timeStamp = data.TimeStamp;                 // long to float
 
-                _sampleData.worldGazeDistance = 20.0f;
-
-
-                if (data.Right != null && data.Left != null)
+                if(data.Right.GazeRayWorldValid && data.Left.GazeRayWorldValid)
                 {
-                    _sampleData.whichEye = SampleData.Eye.both;
-                    _sampleData.isValid = true;
-                    _sampleData.worldGazeOrigin = data.CombinedGazeRayWorldValid ? data.CombinedGazeRayWorld.origin : new Vector3(-1, -1, -1);
-                    _sampleData.worldGazeDirection = data.CombinedGazeRayWorldValid ? data.CombinedGazeRayWorld.direction : new Vector3(-1, -1, -1);
-                    _sampleData.cameraPosition = data.Pose.Position;
-                    _sampleData.cameraRotation = data.Pose.Rotation;
-                    _sampleData.pupilDiameterLeft = data.Left.PupilDiameterValid ? data.Left.PupilDiameter * 1000 : -1.0d;
-                    _sampleData.pupilDiameterRight = data.Right.PupilDiameterValid ? data.Right.PupilDiameter * 1000 : -1.0d;
-
+                    _sampleData.isValid = data.CombinedGazeRayWorldValid;
+                    _sampleData.worldGazeOrigin = data.CombinedGazeRayWorld.origin;
+                    _sampleData.worldGazeDirection = data.CombinedGazeRayWorld.direction;
                 }
-                else if (data.Right != null && data.Left == null)
+                else if (data.Right.GazeRayWorldValid && !data.Left.GazeRayWorldValid)
                 {
-                    _sampleData.whichEye = SampleData.Eye.right;
                     _sampleData.isValid = data.Right.GazeRayWorldValid;
                     _sampleData.worldGazeOrigin = data.Right.GazeRayWorld.origin;
                     _sampleData.worldGazeDirection = data.Right.GazeRayWorld.direction;
-                    _sampleData.cameraPosition = data.Pose.Position;
-                    _sampleData.cameraRotation = data.Pose.Rotation;
-
-                    _sampleData.pupilDiameterLeft = data.Left.PupilDiameterValid? data.Left.PupilDiameter * 1000 : -1.0d;
-                    _sampleData.pupilDiameterRight = data.Right.PupilDiameterValid? data.Right.PupilDiameter * 1000 : -1.0d;
-
                 }
                 else
                 {
-                    _sampleData.whichEye = SampleData.Eye.left;
                     _sampleData.isValid = data.Left.GazeRayWorldValid;
                     _sampleData.worldGazeOrigin = data.Left.GazeRayWorld.origin;
                     _sampleData.worldGazeDirection = data.Left.GazeRayWorld.direction;
-                    _sampleData.cameraPosition = data.Pose.Position;
-                    _sampleData.cameraRotation = data.Pose.Rotation;
-                    _sampleData.pupilDiameterLeft = data.Left.PupilDiameterValid ? data.Left.PupilDiameter*1000 : -1.0d;
-                    _sampleData.pupilDiameterRight = data.Right.PupilDiameterValid ? data.Right.PupilDiameter*1000 : -1.0d;
                 }
 
 
-                // local space
-                if (data.Right != null && data.Left != null)
-                {
-                    _sampleData.whichEye = SampleData.Eye.both;
-                    _sampleData.isValid = true;
-                    _sampleData.localGazeOrigin = data.Left.GazeOriginValid && data.Right.GazeOriginValid ? (data.Left.GazeOrigin + data.Right.GazeOrigin) / 2 : new Vector3(-1,-1,-1);
-                    _sampleData.localGazeDirection = data.Left.GazeDirectionValid && data.Right.GazeDirectionValid ? (data.Left.GazeDirection + data.Right.GazeDirection) / 2 : new Vector3(-1, -1, -1);
+                _sampleData.worldGazeDistance = 20.0f;
+                NewGazesampleReady?.Invoke(this._sampleData);
 
-                }
-                else if (data.Right != null  && data.Left == null)
-                {
-                    _sampleData.localGazeOrigin = data.Right.GazeOriginValid ? data.Right.GazeOrigin : new Vector3(-1, -1, -1);
-                    _sampleData.localGazeDirection = data.Right.GazeDirectionValid ? data.Right.GazeDirection : new Vector3(-1, -1, -1);
-
-                }
-                else
-                {
-                    _sampleData.whichEye = SampleData.Eye.left;
-                    _sampleData.isValid = true;
-                    _sampleData.localGazeOrigin = data.Left.GazeOriginValid ? data.Left.GazeOrigin : new Vector3(-1, -1, -1);
-                    _sampleData.localGazeDirection = data.Left.GazeDirectionValid ? data.Left.GazeDirection : new Vector3(-1, -1, -1);
-                }
-
-                ET_NewSampleAvailable_Event?.Invoke(_sampleData);           // Raise event           // Raise event
-                gazeQueue.Enqueue(_sampleData);
-                    
+                if (queueGazeSignal)
+                    gazeQueue.Enqueue(this._sampleData);
 
             }
 
+           
             yield return null;
+
+            if (!isHarvestingGaze)
+                break;
         }
     }
 
-    public bool SubscribeToGazeData()
+    public bool subscribeToGazeData()
     {
         bool success = false;
-        if (_eyeTracker != null)
+        if (this._eyeTracker != null)
         { 
-            success = _eyeTracker.SubscribeToGazeData;
+            success = this._eyeTracker.SubscribeToGazeData;
             if (success)
                 Debug.Log("Subscription successfull!");
             else
                 Debug.LogError("Subscription failed!");
 
+            success = this._eyeTracker.SubscribeToGazeData;
         }
         else
         {
@@ -215,24 +208,16 @@ public class TobiiProProvider : EyeTrackingProviderInterface
 
     }
 
-    public long GetCurrentSystemTimestamp()
+    public long getCurrentSystemTimestamp()
     {
         return (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 
     }
-
-    public void StartSampleHarvesterThread()
+    public void calibratePositionAndIPD()
     {
-        isHaversterThreadRunning = true;
-        ET_SampleHarvesterThread_Started_Event?.Invoke();
-        _mb.StartCoroutine(this.GetGaze());
+        // As far as i know this is not possible with this headset.
     }
 
-    public void StopSampleHarvesterThread()
-    {
-        isHaversterThreadRunning = false;
-        ET_SampleHarvesterThread_Stopped_Event?.Invoke();
-    }
 }
 
 

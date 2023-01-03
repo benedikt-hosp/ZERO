@@ -5,6 +5,10 @@ using System.IO;
 using UnityEngine;
 using UnityEngine.InputSystem.XR;
 
+
+public delegate void SaveMSG(string msg);
+
+
 public class Example_Zero : MonoBehaviour
 {
     /*
@@ -19,13 +23,16 @@ public class Example_Zero : MonoBehaviour
     [Header("Choose Save folder")]
     public string dataFolder;
 
+    [Header("Save Gaze on disc?")]
+    public bool writeGazeToFile;
+
     // Objects
     ZERO etController;
-    GazeWriter gazeWriter;
+    string userFolder;
 
 
     // Event to call when you want to drop a message in the gaze file
-    public event ET_WriteMessageToGazeFile etMSG2File;
+    public event SaveMSG OnSaveMsgEvent;
 
 
     /* Example method calls:
@@ -53,4 +60,67 @@ public class Example_Zero : MonoBehaviour
     }
 
 
+    private void Start()
+    {
+        userFolder = createUserFolder(dataFolder);                          // Set up user folder
+        this.etController = new ZERO(eyeTrackingProvider, this);                  // ZERO constructor
+        this.etController.getSetEyetrackingProvider.getSetETProvider.NewGazesampleReady += GetCurrentGazeSignal;
+
+
+  
+    }
+
+    private string createUserFolder(string userName)
+    {
+        string oldName;
+        string userFolder;
+        int fileCounter = 1;
+        userFolder = userName;
+
+        oldName = userFolder;
+
+        while (Directory.Exists(userFolder))
+        {
+            userFolder = oldName + fileCounter.ToString();
+            fileCounter += 1;
+        }
+
+        Directory.CreateDirectory(userFolder);
+
+        return userFolder;
+    }
+
+    public void activateEyeTracking()
+    {
+        this.etController.startET();
+
+    }
+
+    public void OnApplicationQuit()
+    {
+        if (this.etController != null)
+            this.etController.stop();
+    }
+
+
+    private void Update()
+    {
+        // IPD: Calibrate IPD anytime
+        if (Input.GetKeyUp(KeyCode.A))
+        {
+            OnSaveMsgEvent?.Invoke("IPD calibration started.");
+            this.etController.etpc.CalibratePositionAndIPD();
+        }
+
+
+        // ET CALIB: Calibrate EYE Tracker anytime
+        if (Input.GetKeyUp(KeyCode.C))
+        {
+            OnSaveMsgEvent?.Invoke("Eye tracking calibration started.");
+            this.etController.etpc.CalibrateEyeTracker();
+
+        }
+
+
+    }
 }

@@ -3,206 +3,191 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-using static EyeTrackingProviderInterface;
+
 using ViveSR.anipal.Eye;
 using System.Collections;
+using System.Collections.Concurrent;
 
 public class SRanipalProvider : EyeTrackingProviderInterface
 {
 
+
+    public static event OnCalibrationStarted OnCalibrationStartedEvent;
+    public static event OnCalibrationSucceeded OnCalibrationSucceededEvent;
+    public static event OnCalibrationFailed OnCalibrationFailedEvent;
+
+    public event OnAutoIPDCalibrationStarted OnAutoIPDCalibrationStartedEvent;
+    public event OnAutoIPDCalibrationSucceeded OnAutoIPDCalibrationSucceededEvent;
+    public event OnAutoIPDCalibrationFailed OnAutoIPDCalibrationFailedEvent;
+
+    public event NewGazeSampleReady NewGazesampleReady;
+    public event OnCalibrationStarted OnCalibrationStartedEventObj;
+    public event OnCalibrationSucceeded OnCalibrationSucceededEventObj;
+    public event OnCalibrationFailed OnCalibrationFailedEventObj;
+
+    // Eye Tracking Interface
+    private bool isReady = false;
+    private bool isCalibrationRunning = false;
+    public bool etIsReady { get { return isReady; } }
+    public bool isCalibrating { get { return isCalibrationRunning; } set { this.isCalibrationRunning = value; } }
+    public List<SampleData> getCurrentSamples { get { return gazeSamplesOfCP; } }
+    ConcurrentQueue<SampleData> gazeQueue;
+    public List<SampleData> gazeSamplesOfCP;
+    public MonoBehaviour _mb = GameObject.FindObjectOfType<MonoBehaviour>();
+    // The surrogate MonoBehaviour that we'll use to manage this coroutine.
+    SampleData _sampleData;
+
+    bool queueGazeSignal = false;
+    bool isHarvestingGaze = false;
+
+
     // SRanipal Specific
-    public GameObject _sranipalGameObject;
-    public SRanipal_Eye_Framework sranipal;
-    public EyeData_v2 eyeData = new EyeData_v2();
+    private GameObject _sranipalGameObject;
+    private SRanipal_Eye_Framework sranipal;
+    private EyeData_v2 eyeData = new EyeData_v2();
 
-    /* Events */
-    public event ET_NewSampleAvailable_Event ET_NewSampleAvailable_Event;
-    public event ET_Started_Event ET_Started_Event;
-    public event ET_Stopped_Event ET_Stopped_Event;
-    public event ET_SampleHarvesterThread_Started_Event ET_SampleHarvesterThread_Started_Event;
-    public event ET_SampleHarvesterThread_Stopped_Event ET_SampleHarvesterThread_Stopped_Event;
-    public event ET_Calibration_Started_Event ET_Calibration_Started_Event;
-    public event ET_Calibration_Succeded_Event ET_Calibration_Succeded_Event;
-    public event ET_Calibration_Failed_Event ET_Calibration_Failed_Event;
 
-    public bool InitializeDevice()
+
+    public bool initializeDevice()
     {
-        _mb = GameObject.FindObjectOfType<MonoBehaviour>();
-
         _sampleData = new SampleData();
-        gazeQueue = new Queue<SampleData>();
+        gazeQueue = new ConcurrentQueue<SampleData>();
+        this._mb = GameObject.FindObjectOfType<MonoBehaviour>();
 
+        this.isReady = true;
 
-        _sranipalGameObject = new GameObject("EyeFramework");
-        sranipal = _sranipalGameObject.AddComponent<SRanipal_Eye_Framework>();
+        // SRanipal specific
+        this._sranipalGameObject = new GameObject("EyeFramework");
+        this.sranipal = _sranipalGameObject.AddComponent<SRanipal_Eye_Framework>();
 
         if (!SRanipal_Eye_API.IsViveProEye()) return false;
-        sranipal.StartFramework();
+        this.sranipal.StartFramework();
 
 
         if (SRanipal_Eye_Framework.Status != SRanipal_Eye_Framework.FrameworkStatus.WORKING)
         {
-             sranipal.StartFramework();
+            this.sranipal.StartFramework();
         }
 
-        if (SRanipal_Eye_Framework.Status == SRanipal_Eye_Framework.FrameworkStatus.WORKING)
-        { 
-            ET_Started_Event?.Invoke();
-            return true;
-        }
-
-        return false;                
+        return (SRanipal_Eye_Framework.Status == SRanipal_Eye_Framework.FrameworkStatus.WORKING);                
     }
 
-    IEnumerator GetGaze()
+    public void clearQueue()
+    {
+        // clear queue
+        gazeQueue.Clear();
+    }
+
+    public void getGazeQueue()
+    {
+        this.gazeSamplesOfCP = this.gazeQueue.ToList();
+        this.clearQueue();
+
+    }
+
+    public void stopETThread()
+    {
+        isHarvestingGaze = false;
+    }
+
+    public void startETThread()
+    {
+        isHarvestingGaze = true;
+        this._mb.StartCoroutine(getGaze());
+    }
+
+    IEnumerator getGaze()
     { 
-        while(isHaversterThreadRunning)
+        while(isHarvestingGaze)
         {
-            _sampleData = new SampleData();
+            this._sampleData = new SampleData();
             bool success = SRanipal_Eye_v2.GetVerboseData(out eyeData.verbose_data);
+
 
             if (success)
             {
-                if (!eyeData.Equals(default(EyeData_v2)))
+                if (!this.eyeData.Equals(default(EyeData_v2)))
                 {
                     Vector3 origin;
                     Vector3 direction;
+                    this._sampleData.timeStamp = getCurrentSystemTimestamp();
 
-                    _sampleData.systemTimeStamp = GetCurrentSystemTimestamp();
-                    _sampleData.deviceTimestamp = eyeData.timestamp;
-                    _sampleData.worldGazeDistance = 20.0f;
-
-                    if (!eyeData.verbose_data.right.Equals(default(SingleEyeData)) && !eyeData.verbose_data.right.Equals(default(SingleEyeData)))
+                    if (!this.eyeData.verbose_data.right.Equals(default(SingleEyeData)) && !this.eyeData.verbose_data.right.Equals(default(SingleEyeData)))
                     {
-                        _sampleData.whichEye = SampleData.Eye.both;
-                        _sampleData.isValid = true;
 
-                        _sampleData.isValid = SRanipal_Eye.GetGazeRay(GazeIndex.COMBINE, out origin, out direction);
-                        _sampleData.worldGazeOrigin = origin;
-                        _sampleData.worldGazeDirection = direction;
-
-                        _sampleData.localGazeOrigin = origin;
-                        _sampleData.localGazeDirection = direction;
-
-                        _sampleData.ConvergenceDistance = eyeData.verbose_data.combined.convergence_distance_validity ? eyeData.verbose_data.combined.convergence_distance_mm : 20.0f;
-                        _sampleData.pupilDiameterLeft = eyeData.verbose_data.left.pupil_diameter_mm;
-                        _sampleData.pupilDiameterRight = eyeData.verbose_data.right.pupil_diameter_mm;
+                        this._sampleData.isValid = SRanipal_Eye.GetGazeRay(GazeIndex.COMBINE, out origin, out direction);
+                        this._sampleData.worldGazeOrigin = origin;
+                        this._sampleData.worldGazeDirection = direction;
+                        this._sampleData.worldGazeDistance = eyeData.verbose_data.combined.convergence_distance_mm / 1000;
 
                     }
-                    else if (!eyeData.verbose_data.right.Equals(default(SingleEyeData)) && eyeData.verbose_data.right.Equals(default(SingleEyeData)))
+                    else if (!this.eyeData.verbose_data.right.Equals(default(SingleEyeData)) && this.eyeData.verbose_data.right.Equals(default(SingleEyeData)))
                     {
-                        _sampleData.whichEye = SampleData.Eye.right;
-                        _sampleData.isValid = SRanipal_Eye.GetGazeRay(GazeIndex.RIGHT, out origin, out direction);
-                        _sampleData.worldGazeOrigin = origin;
-                        _sampleData.worldGazeDirection = direction;
-                        
-                        _sampleData.localGazeOrigin = origin;
-                        _sampleData.localGazeDirection = direction;
-
-                        _sampleData.pupilDiameterLeft = -1.0f;
-                        _sampleData.pupilDiameterRight = eyeData.verbose_data.right.pupil_diameter_mm;
+                        this._sampleData.isValid = SRanipal_Eye.GetGazeRay(GazeIndex.RIGHT, out origin, out direction);
+                        this._sampleData.worldGazeOrigin = origin;
+                        this._sampleData.worldGazeDirection = direction;
+                        this._sampleData.worldGazeDistance = eyeData.verbose_data.combined.convergence_distance_mm / 1000;
 
                     }
                     else
                     {
-                        _sampleData.whichEye = SampleData.Eye.left;
-                        _sampleData.isValid = SRanipal_Eye.GetGazeRay(GazeIndex.LEFT, out origin, out direction);
-                        _sampleData.worldGazeOrigin = origin;
-                        _sampleData.worldGazeDirection = direction;
-
-                        _sampleData.localGazeOrigin = origin;
-                        _sampleData.localGazeDirection = direction;
-
-                        _sampleData.pupilDiameterRight = -1.0f;
-                        _sampleData.pupilDiameterLeft = eyeData.verbose_data.left.pupil_diameter_mm;
+                        this._sampleData.isValid = SRanipal_Eye.GetGazeRay(GazeIndex.LEFT, out origin, out direction);
+                        this._sampleData.worldGazeOrigin = origin;
+                        this._sampleData.worldGazeDirection = direction;
+                        this._sampleData.worldGazeDistance = eyeData.verbose_data.combined.convergence_distance_mm / 1000;
                     }
+                    NewGazesampleReady?.Invoke(this._sampleData);
 
-
-                    ET_NewSampleAvailable_Event?.Invoke(_sampleData);
-                    gazeQueue.Enqueue(_sampleData);
-
+                    if (queueGazeSignal)
+                        gazeQueue.Enqueue(this._sampleData);
+                  
                 }        
             }
             yield return null;
 
+            if (!isHarvestingGaze)
+                break;
+
         }
     }
 
-
-    public void ClearQueue()
+    public void calibrateET()
     {
-            gazeQueue.Clear();
-    }
+        Debug.LogError("SRanipal Provider started calibration.");
+        OnCalibrationStartedEvent?.Invoke();
+        OnCalibrationStartedEventObj?.Invoke();
+        isCalibrating = true;
 
-    public void GetGazeQueue()
-    {
-        gazeSamplesOfCP = gazeQueue.ToList();
-        ClearQueue();
-
-    }
-
-    public SampleData GetGazeLive()
-    {
-        SampleData sampleData = gazeQueue.Dequeue();
-        return sampleData;
-    }
-
-    public void Destroy()
-    {
-        sranipal = null;
-            
-    }
-
-    public bool Calibrate()
-    {
-        isCalibrationRunning = true;
-        ET_Calibration_Started_Event?.Invoke(); 
-        bool success = SRanipal_Eye_v2.LaunchEyeCalibration();
-        isCalibrationRunning = false;
-        if (success)
-            ET_Calibration_Succeded_Event?.Invoke();
+        if (SRanipal_Eye_v2.LaunchEyeCalibration())
+            OnCalibrationSucceededEventObj?.Invoke();
         else
-            ET_Calibration_Failed_Event?.Invoke();
+            OnCalibrationSucceededEvent?.Invoke();
 
-        return success;
-        
-    }
-
-    public void Close()
-    {
-        sranipal = null;
-        ET_Stopped_Event?.Invoke();
-
+        isCalibrating = false;
 
     }
 
-    public bool SubscribeToGazeData()
+    public void close()
     {
-         if (!SRanipal_Eye_Framework.Instance.enabled)
-         {
-            SRanipal_Eye_Framework.Instance.enabled = true;
-         }
-        return SRanipal_Eye_Framework.Instance.enabled;
+        isHarvestingGaze = false;
+        this.sranipal = null;
+
 
     }
 
-    public long GetCurrentSystemTimestamp()
-    {
-        return DateTimeOffset.Now.ToUnixTimeMilliseconds();
-
+    public bool subscribeToGazeData()
+    {      
+        return SRanipal_Eye_Framework.Instance.enabled = true;
     }
 
-    public void StartSampleHarvesterThread()
+    public long getCurrentSystemTimestamp()
     {
-        isHaversterThreadRunning = true;
-        ET_SampleHarvesterThread_Started_Event?.Invoke();
-        _mb.StartCoroutine(GetGaze());
-    }
+        return (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
 
-    public void StopSampleHarvesterThread()
+    }
+    public void calibratePositionAndIPD()
     {
-        isHaversterThreadRunning = false;
-        ET_SampleHarvesterThread_Stopped_Event?.Invoke();
+        // As far as i know this is not possible with this headset.
     }
 }
 

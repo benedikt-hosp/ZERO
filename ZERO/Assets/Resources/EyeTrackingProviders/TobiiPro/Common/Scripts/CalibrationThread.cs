@@ -8,9 +8,9 @@ namespace Tobii.Research.Unity
 {
     /// <summary>
     /// A class to handle blocking calibration calls. The reason is that
-    /// blocking calls and thread sleep should be avoided in the main thread.
+    /// blocking calls and depthMapRecordingThread sleep should be avoided in the main depthMapRecordingThread.
     /// 
-    /// For example, when using the Vive HMD, if the Update() thread is
+    /// For example, when using the Vive HMD, if the Update() depthMapRecordingThread is
     /// blocked more than 10 frames, or about 110 ms, the background will start
     /// to fade out and the default SteamVR background will fade in. Also, any
     /// movement will be stopped during the block.
@@ -24,7 +24,7 @@ namespace Tobii.Research.Unity
         private Thread _thread;
         private bool _running;
 
-        // Indicates if the thread is running.
+        // Indicates if the depthMapRecordingThread is running.
         public bool Running
         {
             get
@@ -285,7 +285,7 @@ namespace Tobii.Research.Unity
         }
 
         // The following methods correspond to their equivalents in the calibration ScreenBasedCalibration object.
-        // They create a command that will be executed by the thread function.
+        // They create a command that will be executed by the depthMapRecordingThread function.
         public MethodResult EnterCalibrationMode()
         {
             return Command(MethodResult.CommandType.Enter, new Point(0, 0));
@@ -307,7 +307,7 @@ namespace Tobii.Research.Unity
         }
 
         /// <summary>
-        /// Stop the thread and if there is a current command, mark it as ready.
+        /// Stop the depthMapRecordingThread and if there is a current command, mark it as ready.
         /// </summary>
         /// <returns>The result from the Join call.</returns>
         public bool StopThread()
@@ -328,7 +328,7 @@ namespace Tobii.Research.Unity
         }
 
         /// <summary>
-        /// Constructor that creates and starts the calibration thread.
+        /// Constructor that creates and starts the calibration depthMapRecordingThread.
         /// </summary>
         public CalibrationThread(IEyeTracker eyeTracker, bool screenBased)
         {
@@ -340,7 +340,7 @@ namespace Tobii.Research.Unity
         }
 
         /// <summary>
-        /// The thread function that calls the blocking calibration methods.
+        /// The depthMapRecordingThread function that calls the blocking calibration methods.
         /// </summary>
         private void ThreadFunction()
         {

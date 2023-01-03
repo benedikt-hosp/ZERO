@@ -49,7 +49,7 @@ namespace Tobii.Research.Unity
         [Tooltip("Calibration points.")]
         private Vector3[] _points;
 
-        // Handle blocking calls to calibration in a separate thread.
+        // Handle blocking calls to calibration in a separate depthMapRecordingThread.
         private CalibrationThread _calibrationThread;
         private bool _calibrationInProgress;
 
@@ -99,7 +99,7 @@ namespace Tobii.Research.Unity
         /// <returns>An enumerator</returns>
         private IEnumerator WaitForResult(CalibrationThread.MethodResult result)
         {
-            // Wait for the thread to finish the blocking call.
+            // Wait for the depthMapRecordingThread to finish the blocking call.
             while (!result.Ready)
             {
                 yield return new WaitForSeconds(0.02f);
@@ -109,7 +109,7 @@ namespace Tobii.Research.Unity
         }
 
         /// <summary>
-        /// Calibration coroutine. Drives the calibration thread states.
+        /// Calibration coroutine. Drives the calibration depthMapRecordingThread states.
         /// </summary>
         /// <param name="points">Optional point list. Null means default set.</param>
         /// <param name="resultCallback">A result callback or null for none.</param>
@@ -127,10 +127,10 @@ namespace Tobii.Research.Unity
                 _calibrationThread = null;
             }
 
-            // Create and start the calibration thread.
+            // Create and start the calibration depthMapRecordingThread.
             _calibrationThread = new CalibrationThread(VREyeTracker.Instance.EyeTrackerInterface, screenBased: false);
 
-            // Only continue if the calibration thread is running.
+            // Only continue if the calibration depthMapRecordingThread is running.
             for (int i = 0; i < 10; i++)
             {
                 if (_calibrationThread.Running)
@@ -143,7 +143,7 @@ namespace Tobii.Research.Unity
 
             if (!_calibrationThread.Running)
             {
-                Debug.LogError("Failed to start calibration thread");
+                Debug.LogError("Failed to start calibration depthMapRecordingThread");
                 _calibrationThread.StopThread();
                 _calibrationThread = null;
                 _calibrationInProgress = false;
@@ -195,7 +195,7 @@ namespace Tobii.Research.Unity
             // Wait for the call to finish
             yield return StartCoroutine(WaitForResult(leaveResult));
 
-            // Stop the thread.
+            // Stop the depthMapRecordingThread.
             _calibrationThread.StopThread();
             _calibrationThread = null;
 
@@ -217,12 +217,12 @@ namespace Tobii.Research.Unity
         /// </summary>
         private void OnDisable()
         {
-            // Stop the calibration thread if it is not null.
+            // Stop the calibration depthMapRecordingThread if it is not null.
             if (_calibrationThread != null)
             {
                 var result = _calibrationThread.StopThread();
                 _calibrationThread = null;
-                Debug.Log("Calibration thread stopped: " + (result ? "YES" : "NO"));
+                Debug.Log("Calibration depthMapRecordingThread stopped: " + (result ? "YES" : "NO"));
             }
         }
 

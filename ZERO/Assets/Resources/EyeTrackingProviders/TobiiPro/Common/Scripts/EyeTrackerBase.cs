@@ -119,7 +119,7 @@ namespace Tobii.Research.Unity
         protected Thread _autoConnectThread;
 
         /// <summary>
-        /// Lock for communication with the thread.
+        /// Lock for communication with the depthMapRecordingThread.
         /// </summary>
         protected object _autoConnectLock = new object();
 
@@ -129,12 +129,12 @@ namespace Tobii.Research.Unity
         protected object _userPositionGuideLock = new object();
 
         /// <summary>
-        /// The thread-running flag.
+        /// The depthMapRecordingThread-running flag.
         /// </summary>
         protected bool _autoConnectThreadRunning;
 
         /// <summary>
-        /// Locked access to the thread-runnign flag.
+        /// Locked access to the depthMapRecordingThread-runnign flag.
         /// </summary>
         protected bool AutoConnectThreadRunning
         {

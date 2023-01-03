@@ -17,34 +17,34 @@ public class EyeTrackingProviderController
     private string _currentProviderName = TobiiProProviderName;
     private Providers providerSDK;
 
-    public EyeTrackingProviderInterface getSetETProvider { get { return eyeTrackingProviderInterface; } }
+    public EyeTrackingProviderInterface getSetETProvider { get { return this.eyeTrackingProviderInterface; } }
 
 
     public EyeTrackingProviderController(Providers providerSDK)
     {
         this.providerSDK = providerSDK;
-        InitGazeProvider();
+        this.InitGazeProvider();
         
         
     }
 
     private void InitGazeProvider()
     {
-        if (eyeTrackingProviderInterface != null) return;
+        if (this.eyeTrackingProviderInterface != null) return;
         Debug.Log("Initializing provider: " + this.providerSDK);
         UpdateCurrentProvider();
 
-        eyeTrackingProviderInterface = GetProvider();
+        this.eyeTrackingProviderInterface = GetProvider();
 
 
 
-        if (eyeTrackingProviderInterface != null)
+        if (this.eyeTrackingProviderInterface != null)
         {
-            bool success = eyeTrackingProviderInterface.InitializeDevice();
+            bool success = this.eyeTrackingProviderInterface.initializeDevice();
             if (success)
             {
                 Debug.Log("Initialized device!");
-                ETReady = true;
+                this.ETReady = true;
             }
             else
                 Debug.Log("Cannot initialize device");
@@ -121,35 +121,61 @@ public class EyeTrackingProviderController
     }
 
     // ======================================== Calibration
-    public bool Calibrate()
+    public void CalibrateEyeTracker()
+    {
+        Debug.LogError("EyetrackingProviderController started ET calibration");
+        if (this.eyeTrackingProviderInterface != null)
+        {
+            this.eyeTrackingProviderInterface.stopETThread();
+            this.eyeTrackingProviderInterface.calibrateET();
+            this.eyeTrackingProviderInterface.startETThread();
+        }
+        else
+        {
+            Debug.LogError("ETPC.eyeTrackingProviderInterface object is dead");
+        }
+        
+    }
+    public void CalibratePositionAndIPD()
     {
         bool success = false;
-        Debug.Log("ZERO: started calibration");
-        if (eyeTrackingProviderInterface != null)
+        Debug.Log("EyetrackingProviderController started IPD calibration");
+        if (this.eyeTrackingProviderInterface != null)
         {
-            success = eyeTrackingProviderInterface.Calibrate();
+            this.eyeTrackingProviderInterface.calibratePositionAndIPD();
         }
-        return success;
+        else
+        {
+            Debug.LogError("ETPC.eyeTrackingProviderInterface object is dead");
+        }
     }
 
-    public void StartET()
+    public void startETThread()
     {
-        Debug.Log("Subscribing to gaze signal.");
+        this.eyeTrackingProviderInterface.startETThread();
+    }
 
-        bool registrered = eyeTrackingProviderInterface.SubscribeToGazeData();
+    public void stop()
+    {
+        this.eyeTrackingProviderInterface.stopETThread();
+    }
+
+    public void Close()
+    {
+        this.eyeTrackingProviderInterface.close();
+    }
+
+
+    public bool SubscribeToGaze()
+    {
+        //Debug.LogError("Now registered");
+
+        bool registrered = this.eyeTrackingProviderInterface.subscribeToGazeData();
         if (!registrered)
             Debug.LogWarning("Could not subscribe to gaze");
-        
-        eyeTrackingProviderInterface.StartSampleHarvesterThread();
+        return registrered;
+            
     }
-
-    public void CloseET()
-    {
-        eyeTrackingProviderInterface.StopSampleHarvesterThread();
-        eyeTrackingProviderInterface.Close();
-    }
-
-  
 
     
 }
