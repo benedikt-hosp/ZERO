@@ -9,7 +9,7 @@ using UnityEngine.InputSystem.XR;
 public delegate void SaveMSG(string msg);
 
 
-public class Example_Zero : MonoBehaviour
+public class Zero : MonoBehaviour
 {
     /*
      * Public variables

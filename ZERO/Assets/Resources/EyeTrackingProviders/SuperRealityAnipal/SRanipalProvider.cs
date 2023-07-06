@@ -88,7 +88,7 @@ public class SRanipalProvider : EyeTrackingProviderInterface
     public void stopETThread()
     {
         isHarvestingGaze = false;
-    }
+    } 
 
     public void startETThread()
     {

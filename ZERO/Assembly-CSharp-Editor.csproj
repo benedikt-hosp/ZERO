@@ -896,13 +896,13 @@
       <Project>{96548B8A-2A7B-7E38-B408-301080AFA041}</Project>
       <Name>TobiiXRCore</Name>
     </ProjectReference>
-    <ProjectReference Include="GazeModifierEditor.csproj">
-      <Project>{D8C39AEF-DA79-877C-5367-B87D2989B479}</Project>
-      <Name>GazeModifierEditor</Name>
-    </ProjectReference>
     <ProjectReference Include="TobiiXRG2OM.csproj">
       <Project>{8AC9CDA2-DC72-313C-8A35-C7819DAE260C}</Project>
       <Name>TobiiXRG2OM</Name>
+    </ProjectReference>
+    <ProjectReference Include="GazeModifierEditor.csproj">
+      <Project>{D8C39AEF-DA79-877C-5367-B87D2989B479}</Project>
+      <Name>GazeModifierEditor</Name>
     </ProjectReference>
     <ProjectReference Include="TobiiXRDevTools.csproj">
       <Project>{66D51EB5-3B5A-CEEA-1AE0-957FB15582CE}</Project>

@@ -24,7 +24,7 @@ public class ZERO
 
     public EyeTrackingProviderController getSetEyetrackingProvider { get { return this.etpc; } }
 
-    public ZERO(Providers eyeTrackingProvider, Example_Zero exZero)
+    public ZERO(Providers eyeTrackingProvider, Zero exZero)
     {
 
         this.eyeTrackingProvider = eyeTrackingProvider;

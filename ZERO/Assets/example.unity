@@ -251,9 +251,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 701faef798a97674eb5bf7793102e9ae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  vrProvider: 1
-  eyeTrackingProvider: 0
-  dataFolder: C:\\Bernd\\
+  vrProvider: 0
+  eyeTrackingProvider: 2
+  dataFolder: C:\\Userfolder\\
   writeGazeToFile: 0
 --- !u!1 &1272745551
 GameObject:
