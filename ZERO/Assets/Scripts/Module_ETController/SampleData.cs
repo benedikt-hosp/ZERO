@@ -5,14 +5,11 @@ using System.Text;
 using System;
 public class SampleData
 {
-    internal Vector3 vergenceAngle_R;
-    internal Vector3 vergenceAngle_L;
+    
 
     public long timeStamp { get; set; }
     public bool isValid { get; set; }
     public bool exclude { get; set; }
-    public float targetId { get; set; }
-
     public double ipd { get; set; }
     public Vector3 cameraPosition { get; set; }
     public Vector3 localGazeOrigin { get; set; }
@@ -25,8 +22,10 @@ public class SampleData
     public Vector3 worldGazeDirection_L { get; set; }
     public float worldGazeDistance { get; set; }
     public Vector3 worldGazePoint { get; set; }
-    public Vector3 localMarkerPosition { get; set; }
-    public Vector3 worldMarkerPosition { get; set; }
+
+    internal Vector3 vergenceAngle_R;
+    internal Vector3 vergenceAngle_L;
+
     public float OffsetAngle { get; set; }
     public float interSampleAngle { get; set; }
 

@@ -25,7 +25,7 @@ public class GazeTracker
            "World Gaze Distance\t" +
            "World Gaze Point X\t" + "World Gaze Point Y\t" + "World Gaze Point Z";
 
-    public GazeTracker(string userFolder, EyeTrackingProviderInterface eyeTrackerObject,  Example_Zero exZero)
+    public GazeTracker(string userFolder, EyeTrackingProviderInterface eyeTrackerObject,  Zero exZero)
     {
         this._mb = GameObject.FindObjectOfType<MonoBehaviour>();
         //this.metricsCalculator = new MetricsCalculator(userFolder);

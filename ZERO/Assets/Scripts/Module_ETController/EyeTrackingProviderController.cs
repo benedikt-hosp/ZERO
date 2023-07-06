@@ -112,7 +112,7 @@ public class EyeTrackingProviderController
                 Debug.Log("Activated instance of provider" + tmp.ToString());
             }
             return tmp;
-        }
+        } 
         catch (Exception)
         {
             Debug.LogError("There was an error instantiating the gaze provider: " + ProviderName);
