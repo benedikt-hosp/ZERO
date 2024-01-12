@@ -22,6 +22,8 @@ Click on the image to see the video about how to add the script:
 6. [Device specific functions](#6-device-specific-functions)
 7. [How to add a new Eye-tracker to ZERO](#6-how-to-add-a-new-eye-tracker-to-zero)
 8. [How it works](#7-how-it-works)
+9. [Add new Events and Listeners](#9-add-new-events-and-listeners)
+10.[Reference](#10-reference)
 
 
 
@@ -82,7 +84,7 @@ etController.etpc.Calibrate()		# to call device specific calibration procedure a
 
 
 
-## 3. Add new Events and Listeners
+## 9. Add new Events and Listeners
 
 How to Add Event listeners:
 
@@ -111,29 +113,14 @@ public delegate void TrialEndedEvent_delegate();
 we add it as a class member to a class in which the event will be raised.
 Our event has to have the type of the delegate we just created.
 
-e.g. 
 ```
-public class ExperimentController
-{
-
-	public event MyEvent_delegate MyEvent;
-	
-	public ExperimentController(...){}
-	.
-	.
-	.
-	
-}
+public event TrialEndedEvent_delegate TrialEndedEvent;
 ```
 
-Now we created an event we can raise when something happens and we created a delegate that allows us to add listeners to that event.
-
-
-
-
+Now we created an event we can raise when something happens.
+We also created a delegate that allows us to add listeners to that event.
 
 3. To add a listener to that event: Let's say we want to listen to that new event in our GazeWriter.
-
 This time we have to add our listener inside the constructor of the class we want to handle the event.
 
 ```
@@ -141,17 +128,12 @@ public class GazeWriter
 {
 	public GazeWriter(...)
 	{
-		// Register a method "MyEvent_handlerMethod" to listen to the event "MyEvent"
+		// Register a method "TrialEndedEvent_handlerMethod" to listen to the event "TrialEndedEvent"
 		// raised by the Class "ExperimentController".
-		ExperimentController.MyEvent += MyEvent_handlerMethod;
+		ExperimentController.TrialEndedEvent += TrialEndedEvent_handlerMethod;
 	}
 }
 ```
-
-
-
-
-
 4. Create the handler method
 
 ```
@@ -170,16 +152,15 @@ Note: It is also possible to add parameters to delegates.
 2. Tell delegate that we want to access a parameter: public delegate void MyEvent_delegate(string cCode);
 3. Add the parameter to your handler method: public void MyEvent_handlerMethod(string cCode)
 
-
 And to listen to events raised by objects. Then you have to change your registration to that object:
 
 ```
 ExperimentController.MyEvent += MyEvent_handlerMethod;
-```
 to
-```
 myObject.MyEvent += MyEvent_handlerMethod;
 ```
+
+## 10. Reference
 
 If you use ZERO in your research, please cite the following paper: 
 
