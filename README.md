@@ -5,12 +5,12 @@ ZERO is an open-source eye-tracking controller interface designed for virtual re
 
 ## Table of Contents
 1. [Choose Devices](#1.-eye-tracking-and-vr-devices)
-2. [How to access the controller]
-3. [How to write gaze to file]
-4. [Get Live Gaze signal]
-5. [Call device specific calibration]
-6. [How to add a new Eye-tracker to ZERO]
-7. [How it works]
+2. [How to access the controller](#2-how-to-access-the-controller)
+3. [How to write gaze to file](#3-how-to-write-gaze-to-file)
+4. [Get Live Gaze signal](#4-get-live-gaze-signal)
+5. [Call device specific calibration](#5-call-device-specific-calibration)
+6. [How to add a new Eye-tracker to ZERO](#6-how-to-add-a-new-eye-tracker-to-zero)
+7. [How it works](#7-how-it-works)
 
 
 
@@ -20,14 +20,6 @@ ZERO is an open-source eye-tracking controller interface designed for virtual re
 ![If you choose to use the scripts by attaching them to a game object, you need to specify which VR Headset you use and which EyeTracker.](HowToFiles/ChooseProvider.png "Provider")
 
 Click on the image to see the video about how to add the script:
-
-[![Watch the video](https://img.youtube.com/vi/k842mTuHbdM/hqdefault.jpg)](https://youtu.be/k842mTuHbdM)
-
-
-
-<!-- blank line -->
-Click on the image to see the video about how to add the script:
-
 [![Watch the video](https://img.youtube.com/vi/k842mTuHbdM/hqdefault.jpg)](https://youtu.be/k842mTuHbdM)
 
 <!-- blank line -->
@@ -73,8 +65,17 @@ public void stopSampleHarvester();							# Stops the coroutine that is collectin
 public void close();										# Destructs all objects.
 ```
 
-## 2. GazeWriter
+## 2. How to access the controller
 
+## 3. How to write gaze to file
+
+## 4. Get Live Gaze signal
+
+## 5. Call device specific calibration
+
+## 6. How to add a new Eye-tracker to ZERO
+
+## 7. How it works
 
 Create object of event tracker, wherever you want
 ```
