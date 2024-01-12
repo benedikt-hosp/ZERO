@@ -50,7 +50,7 @@ etController = new ZERO(Providers eyeTrackingProvider);
 etController.StartET();								# start harvesting gaze samples from the device
 etController.StopET();								# stop harvesting et samples
 etController.CloseET();								# close all et processes and threads
-etControler.etpc.eyeTrackingProviderInterface;		# returns the singleton of the eye tracking device
+etControler.etpc.eyeTrackingProviderInterface;			# returns the singleton of the eye tracking device
 etControler.etpc.isCalibrated();					# Returns wether the eye tracker is calibrated or not
 
 
