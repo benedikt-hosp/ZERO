@@ -30,6 +30,8 @@ The inspector view has the following options:
 <!-- blank line -->
 
 Click on the image to see the video about how to add the script:
+<!-- blank line -->
+
 [![Watch the video](https://img.youtube.com/vi/k842mTuHbdM/hqdefault.jpg)](https://youtu.be/k842mTuHbdM)
 
 <!-- blank line -->
