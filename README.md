@@ -19,8 +19,9 @@ Click on the image to see the video about how to add the script:
 3. [How to write gaze to file](#3-how-to-write-gaze-to-file)
 4. [Get Live Gaze signal](#4-get-live-gaze-signal)
 5. [Call device specific calibration](#5-call-device-specific-calibration)
-6. [How to add a new Eye-tracker to ZERO](#6-how-to-add-a-new-eye-tracker-to-zero)
-7. [How it works](#7-how-it-works)
+6. [Device specific functions](#6-device-specific-functions)
+7. [How to add a new Eye-tracker to ZERO](#6-how-to-add-a-new-eye-tracker-to-zero)
+8. [How it works](#7-how-it-works)
 
 
 
@@ -34,7 +35,6 @@ The inspector view has the following options:
 - Start initial calibration on load
 
 
-
 ![If you choose to use the scripts by attaching them to a game object, you need to specify which VR Headset you use and which EyeTracker.](HowToFiles/ChooseProvider.png "Provider")
 
 
@@ -42,9 +42,14 @@ The inspector view has the following options:
 
 If you want to have more control of what is happening when, you can use these functions to personalize ZERO to your needs.
 ```
-ZERO etControler;											# create new object of ZERO
-etControler = new ZERO(Providers eyeTrackingProvider);		# by taking the ET provider form inspector of Unity.
+ZERO etController;											# create new object of ZERO
+etController = new ZERO(Providers eyeTrackingProvider);		# by taking the ET provider form inspector of Unity.
+
+etController.StartET()				# call this function to start harvesting gaze samples from the device
+etController.CloseET()				# call this function to stop all processes
 ```
+
+The ZERO object is the only object you will need to configure your controller. 
 
 ## 3. How to write gaze to file
 
@@ -53,11 +58,19 @@ This is done with an GazeWriter Object.
 
 ## 4. Get Live Gaze signal
 
+     * this.etController.getSetEyeTracker.ET_NewSampleAvailable_Event += GetCurrentGazeSignal;      // Register a method that is called when the eye tracker has a new sample
+
+
 ## 5. Call device specific calibration
 
-## 6. How to add a new Eye-tracker to ZERO
+etController.etpc.Calibrate()		# to call device specific calibration procedure any time
 
-## 7. How it works
+## 6. Device specific functions
+
+
+## 7. How to add a new Eye-tracker to ZERO
+
+## 8. How it works
 
 
 
