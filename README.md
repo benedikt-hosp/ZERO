@@ -3,6 +3,16 @@
 ZERO is an open-source eye-tracking controller interface designed for virtual reality applications. This README provides guidance on how to integrate and use ZERO in your VR projects. The main purpose of ZERO is to support scientist who want to do eye-tracking in virtual reality. 
 
 
+<!-- blank line -->
+
+Click on the image to see the video about how to add the script:
+<!-- blank line -->
+
+[![Watch the video](https://img.youtube.com/vi/k842mTuHbdM/hqdefault.jpg)](https://youtu.be/k842mTuHbdM)
+
+<!-- blank line -->
+
+
 ## Table of Contents
 1. [Choose Devices](#1.-eye-tracking-and-vr-devices)
 2. [How to access the controller](#2-how-to-access-the-controller)
@@ -11,8 +21,6 @@ ZERO is an open-source eye-tracking controller interface designed for virtual re
 5. [Call device specific calibration](#5-call-device-specific-calibration)
 6. [How to add a new Eye-tracker to ZERO](#6-how-to-add-a-new-eye-tracker-to-zero)
 7. [How it works](#7-how-it-works)
-
-
 
 
 
@@ -26,23 +34,22 @@ The inspector view has the following options:
 - Start initial calibration on load
 
 
+
 ![If you choose to use the scripts by attaching them to a game object, you need to specify which VR Headset you use and which EyeTracker.](HowToFiles/ChooseProvider.png "Provider")
-<!-- blank line -->
-
-Click on the image to see the video about how to add the script:
-<!-- blank line -->
-
-[![Watch the video](https://img.youtube.com/vi/k842mTuHbdM/hqdefault.jpg)](https://youtu.be/k842mTuHbdM)
-
-<!-- blank line -->
-
 
 
 ## 2. How to access the controller
 
-
+If you want to have more control of what is happening when, you can use these functions to personalize ZERO to your needs.
+```
+ZERO etControler;											# create new object of ZERO
+etControler = new ZERO(Providers eyeTrackingProvider);		# by taking the ET provider form inspector of Unity.
+```
 
 ## 3. How to write gaze to file
+
+When you checked "Write gaze to file" checkbox in the inspector, ZERO takes care about saving gaze files for each user in the personal user folders.
+This is done with an GazeWriter Object.
 
 ## 4. Get Live Gaze signal
 
@@ -54,9 +61,7 @@ Click on the image to see the video about how to add the script:
 
 
 
-```
-ZERO etControler;											# create new object of ZERO
-etControler = new ZERO(Providers eyeTrackingProvider);		# by taking the ET provider form inspector of Unity.
+
 
 public EyeTrackingProviderInterface getSetEyeTracker				# get the singleton of ZERO.
 {
