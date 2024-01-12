@@ -16,15 +16,39 @@ ZERO is an open-source eye-tracking controller interface designed for virtual re
 
 
 
-## Eye-Tracking and VR devices
-To use the script you can attach the ZERO script to any game object on top level. The first step is to choose which VR glasses and which eye-tracking device you want to load. 
+## Unity inspector settings
+To use the script you can attach the ZERO script to any game object on top level.
+The inspector view has the following options:
+1. Choose your VR glasses 
+2. Choose eye-tracking device
+3. Specify if you want to save gaze files
+4. Specify the path where ZERO saves gaze files.
+5. Start initial calibration on load
+
 
 ![If you choose to use the scripts by attaching them to a game object, you need to specify which VR Headset you use and which EyeTracker.](HowToFiles/ChooseProvider.png "Provider")
+<!-- blank line -->
 
 Click on the image to see the video about how to add the script:
 [![Watch the video](https://img.youtube.com/vi/k842mTuHbdM/hqdefault.jpg)](https://youtu.be/k842mTuHbdM)
 
 <!-- blank line -->
+
+
+
+## 2. How to access the controller
+
+
+
+## 3. How to write gaze to file
+
+## 4. Get Live Gaze signal
+
+## 5. Call device specific calibration
+
+## 6. How to add a new Eye-tracker to ZERO
+
+## 7. How it works
 
 
 
@@ -66,18 +90,6 @@ public void stopSampleHarvester();							# Stops the coroutine that is collectin
 
 public void close();										# Destructs all objects.
 ```
-
-## 2. How to access the controller
-
-## 3. How to write gaze to file
-
-## 4. Get Live Gaze signal
-
-## 5. Call device specific calibration
-
-## 6. How to add a new Eye-tracker to ZERO
-
-## 7. How it works
 
 Create object of event tracker, wherever you want
 ```
