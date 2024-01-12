@@ -19,11 +19,11 @@ ZERO is an open-source eye-tracking controller interface designed for virtual re
 ## Unity inspector settings
 To use the script you can attach the ZERO script to any game object on top level.
 The inspector view has the following options:
-1. Choose your VR glasses 
-2. Choose eye-tracking device
-3. Specify if you want to save gaze files
-4. Specify the path where ZERO saves gaze files.
-5. Start initial calibration on load
+- Choose your VR glasses 
+- Choose eye-tracking device
+- Specify if you want to save gaze files
+- Specify the path where ZERO saves gaze files.
+- Start initial calibration on load
 
 
 ![If you choose to use the scripts by attaching them to a game object, you need to specify which VR Headset you use and which EyeTracker.](HowToFiles/ChooseProvider.png "Provider")
