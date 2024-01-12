@@ -48,12 +48,21 @@ etController = new ZERO(Providers eyeTrackingProvider);
 etController.StartET();				# start harvesting gaze samples from the device
 etController.StopET();				# stop harvesting et samples
 etController.CloseET();				# close all et processes and threads
+etControler.etpc.eyeTrackingProviderInterface;		# returns the singleton of the eye tracking device
+etControler.etpc.isCalibrated();	# Returns wether the eye tracker is calibrated or not
+
+
 ```
 
 ## 3. How to write gaze to file
 
 When you checked "Write gaze to file" checkbox in the inspector, ZERO takes care about saving gaze files for each user in the personal user folders.
 This is done with an GazeWriter Object.
+
+    * this.gazeWriter = new GazeWriter(userFolder, this, this.etController.getSetEyeTracker);      // GazeWriter constructor
+
+   * this.gazeWriter.startGazeWriting();                                                          // Start writing gaze samples to file
+   * this.gazeWriter.stopGazeWriting();                                                           // stop gaze writer and close file.
 
 ## 4. Get Live Gaze signal
 
@@ -73,106 +82,29 @@ etController.etpc.Calibrate()		# to call device specific calibration procedure a
 
 
 
-
-
-public EyeTrackingProviderInterface getSetEyeTracker				# get the singleton of ZERO.
-{
-	 get 
-	 	{
-			 return this.etControler.etpc.eyeTrackingProviderInterface;
-		}
-}
-
-     * Constructors
-     * this.etController = new ZERO(eyeTrackingProvider);                                           // ZERO constructor
-     * this.gazeWriter = new GazeWriter(userFolder, this, this.etController.getSetEyeTracker);      // GazeWriter constructor
-     * 
-     * this.etController.etpc.Calibrate())                                                          // Call to the eye tracker to calibrate
-     * this.etController.getSetEyeTracker.ET_NewSampleAvailable_Event += GetCurrentGazeSignal;      // Register a method that is called when the eye tracker has a new sample
-     * this.etController.StartET();                                                                 // Start eye tracking
-     * this.gazeWriter.startGazeWriting();                                                          // Start writing gaze samples to file
-     * this.gazeWriter.stopGazeWriting();                                                           // stop gaze writer and close file.
-     * this.etController.CloseET();                                                                 // stop eye tracking thread
-     */
-
-
-public bool isCalibrated();									# Returns wether the eye tracker is calibrated or not
-
-public GameObject loadGameobject(string path, string name);	# According to the EyeTrackingProvider, the correct game objects and prefabs are loaded into the scene
-
-public void startET();										# Some eye trackers need to subscribe to the gaze signal or enable it. So call it once, before you
-access data to enable it.
-
-public void startSampleHarvester();							# Starts the coroutine that is collecting the latest gaze samples of the eye tracker  
-
-public void stopSampleHarvester();							# Stops the coroutine that is collecting the latest gaze samples of the eye tracker  
-
-public void close();										# Destructs all objects.
-```
-
-Create object of event tracker, wherever you want
-```
-    GazeWriter gazeWriter;
-    public GazeWriter(string userFolder, EyeTrackingProviderInterface eyeTrackerObject)
-```
-
-Starts a coroutine that is periodically writing gaze samples to specific file
-```
-public void startGazeWriting()`
-```
-
-Stops the coroutine that writes gaze samples to file
-```
-public void stopGazeWriting();
-```
-
-Function returns the current system time in milliseconds
-```
-public long getCurrentSystemTimestamp()
-```
-
-
-
-#### Private functions
-
-```
-IEnumerator writeGazePeriodically();
-WriteGazeToFile(List<SampleData> currentSamples); 
-WriteGazeData(SampleData gazeData)
-```
-<!-- blank line -->
-
 ## 3. Add new Events and Listeners
 
 How to Add Event listeners:
 
-Let's assume we want to raise an event (let's call it "MyEvent") in our ExperimentController Gameobject when the key "C" on the keyboard is clicked and listen to it in our GazeWriter.
+Let's assume we want to raise an event (let's call it "TrialEndedEvent") in our ExperimentController 
+Gameobject when the key "C" on the keyboard is clicked and listen to it in our GazeWriter.
 
-e.g.
 ```
-public class ExperimentController
+void Update()
 {
-	.
-	.
-	.
-	.
-	
-	void Update()
-	{
-		  if (Input.GetKeyUp(KeyCode.C))
-		  {
-				MyEvent();
-		  }
-	}
+		if (Input.GetKeyUp(KeyCode.C))
+		{
+			TrialEndedEvent();
+		}
 }
 ```
 
-
-1. We have to define a delegate (which defines a callback or event listener ) somewhere public. To have a tidy code, we add it to our "Delegates.cs"
-Let's call our delegate MyEvent_delegate, but you can name whatever you want.
+1. We have to define a delegate (which defines a callback or event listener ) somewhere public. 
+To have a tidy code, we add it to our "Delegates.cs"
+Let's call our delegate TrialEndedEvent_delegate, but you can name whatever you want.
 
 ```
-public delegate void MyEvent_delegate();
+public delegate void TrialEndedEvent_delegate();
 ```
 
 2. We can only call events that are connected to a delegate. To create an event, 
