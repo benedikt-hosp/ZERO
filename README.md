@@ -42,8 +42,9 @@ The inspector view has the following options:
 
 If you want to have more control of what is happening when, you can use these functions to personalize ZERO to your needs.
 ```
-ZERO etController;											# create new object of ZERO
-etController = new ZERO(Providers eyeTrackingProvider);		# by taking the ET provider form inspector of Unity.
+ZERO etController;					# create new object of ZERO
+									# by taking the ET provider form inspector of Unity.
+etController = new ZERO(Providers eyeTrackingProvider);		
 
 etController.StartET()				# call this function to start harvesting gaze samples from the device
 etController.CloseET()				# call this function to stop all processes
