@@ -17,7 +17,8 @@ ZERO is an open-source eye-tracking controller interface designed for virtual re
 
 
 ## Eye-Tracking and VR devices
-If you choose to use the scripts by attaching them to a game object, you need to specify which VR Headset you use and which EyeTracker.
+To use the script you can attach the ZERO script to any game object on top level. The first step is to choose which VR glasses and which eye-tracking device you want to load. 
+
 ![If you choose to use the scripts by attaching them to a game object, you need to specify which VR Headset you use and which EyeTracker.](HowToFiles/ChooseProvider.png "Provider")
 
 Click on the image to see the video about how to add the script:
