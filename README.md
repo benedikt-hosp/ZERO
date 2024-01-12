@@ -1,10 +1,27 @@
-# How To
-## 1. EyeTracking Controller
-![If you choose to use the scripts by attaching them to a game object, you need to specify which VR HEadset you use and which EyeTracker.](HowToFiles/ChooseProvider.png "Provider")
+# ZERO: Eye Tracking Controller Interface for VR
 
-If you choose to use the scripts by attaching them to a game object, you need to specify which VR HEadset you use and which EyeTracker.You can also
-define where the GazeWriter Script will save the gazeFile.
+ZERO is an open-source eye-tracking controller interface designed for virtual reality applications. This README provides guidance on how to integrate and use ZERO in your VR projects.
 
+The main purpose of ZERO is to support scientist who want to do eye-tracking in virtual reality. 
+
+
+## Table of Contents
+1. [EyeTracking Controller](#1-eyetracking-controller)
+2. [GazeWriter](#2-gazewriter)
+3. [Add new Events and Listeners](#3-add-new-events-and-listeners)
+
+
+## EyeTracking Controller
+![If you choose to use the scripts by attaching them to a game object, you need to specify which VR Headset you use and which EyeTracker.](HowToFiles/ChooseProvider.png "Provider")
+
+
+### 1. Choose VR Provider / ET Provider
+### 2. How to access the controller
+### 3. How to write gaze to file
+### 4. Get Live Gaze signal
+### 5 . Call device specific calibration
+
+### 6. Example video
 <!-- blank line -->
 Click on the image to see the video about how to add the script:
 
@@ -13,53 +30,49 @@ Click on the image to see the video about how to add the script:
 <!-- blank line -->
 
 
-<!-- blank line -->
-### 1.2 How to use the code
+### 7. How to add a new Eye-tracker to ZERO
+### 8. How it works
 
-If you choose to simply use the classes you can do that by calling the following functions.
+### 7. API
 
-#### Public functions
+```
+ZERO etControler;											# create new object of ZERO
+etControler = new ZERO(Providers eyeTrackingProvider);		# by taking the ET provider form inspector of Unity.
 
-How add an object of ETController 
-```
-ETController etController;
-etController = new ETController(Providers eyeTrackingProvider);
-```
+public EyeTrackingProviderInterface getSetEyeTracker				# get the singleton of ZERO.
+{
+	 get 
+	 	{
+			 return this.etControler.etpc.eyeTrackingProviderInterface;
+		}
+}
 
-Get the set eye tracker back from the controller
-```
-public EyeTrackingProviderInterface getSetEyeTracker { get { return this.etpc.eyeTrackingProviderInterface; } }
-```
-    
-Returns wether the eye tracker is calibrated or not
-```
-public bool isCalibrated();
-```
+     * Constructors
+     * this.etController = new ZERO(eyeTrackingProvider);                                           // ZERO constructor
+     * this.gazeWriter = new GazeWriter(userFolder, this, this.etController.getSetEyeTracker);      // GazeWriter constructor
+     * 
+     * this.etController.etpc.Calibrate())                                                          // Call to the eye tracker to calibrate
+     * this.etController.getSetEyeTracker.ET_NewSampleAvailable_Event += GetCurrentGazeSignal;      // Register a method that is called when the eye tracker has a new sample
+     * this.etController.StartET();                                                                 // Start eye tracking
+     * this.gazeWriter.startGazeWriting();                                                          // Start writing gaze samples to file
+     * this.gazeWriter.stopGazeWriting();                                                           // stop gaze writer and close file.
+     * this.etController.CloseET();                                                                 // stop eye tracking thread
+     */
 
-According to the EyeTrackingProvider, the correct game objects and prefabs are loaded into the scene
-```
-public GameObject loadGameobject(string path, string name);
-```
 
-Some eye trackers need to subscribe to the gaze signal or enable it. So call it once, before you access data to enable it.
-```
-public void startET();
-```
+public bool isCalibrated();									# Returns wether the eye tracker is calibrated or not
 
-Starts the coroutine that is collecting the latest gaze samples of the eye tracker  
-```
-public void startSampleHarvester();
-```
+public GameObject loadGameobject(string path, string name);	# According to the EyeTrackingProvider, the correct game objects and prefabs are loaded into the scene
 
-Stops the coroutine that is collecting the latest gaze samples of the eye tracker  
+public void startET();										# Some eye trackers need to subscribe to the gaze signal or enable it. So call it once, before you
+access data to enable it.
+
+public void startSampleHarvester();							# Starts the coroutine that is collecting the latest gaze samples of the eye tracker  
+
+public void stopSampleHarvester();							# Stops the coroutine that is collecting the latest gaze samples of the eye tracker  
+
+public void close();										# Destructs all objects.
 ```
-public void stopSampleHarvester();
-```
-Destructs all objects.
-```
-public void close();
-```
-<!-- blank line -->
 
 ## 2. GazeWriter
 
@@ -203,5 +216,12 @@ to
 myObject.MyEvent += MyEvent_handlerMethod;
 ```
 
+If you use ZERO in your research, please cite the following paper: 
 
-
+@inproceedings{hosp2023zero,
+  title={ZERO: A Generic Open-Source Extended Reality Eye-Tracking Controller Interface for Scientists},
+  author={Hosp, Benedikt W and Wahl, Siegfried},
+  booktitle={Proceedings of the 2023 Symposium on Eye Tracking Research and Applications},
+  pages={1--4},
+  year={2023}
+}
