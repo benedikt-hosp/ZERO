@@ -68,8 +68,8 @@ This is done with an GazeWriter Object.
 
 ## 4. Get Live Gaze signal
 ```
-	 // Register a method that is called when the eye tracker has a new sample
-     this.etController.getSetEyeTracker.ET_NewSampleAvailable_Event += GetCurrentGazeSignal;      
+	// Register a method that is called when the eye tracker has a new sample
+	this.etController.getSetEyeTracker.ET_NewSampleAvailable_Event += GetCurrentGazeSignal;      
 ```
 
 ## 5. Call device specific calibration
