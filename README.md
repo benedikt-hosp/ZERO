@@ -42,15 +42,13 @@ The inspector view has the following options:
 
 If you want to have more control of what is happening when, you can use these functions to personalize ZERO to your needs.
 ```
-ZERO etController;					# create new object of ZERO
-									# by taking the ET provider form inspector of Unity.
+ZERO etController;					# create new object of ZERO by taking the ET provider from the public inspector variable.
 etController = new ZERO(Providers eyeTrackingProvider);		
 
-etController.StartET()				# call this function to start harvesting gaze samples from the device
-etController.CloseET()				# call this function to stop all processes
+etController.StartET();				# start harvesting gaze samples from the device
+etController.StopET();				# stop harvesting et samples
+etController.CloseET();				# close all et processes and threads
 ```
-
-The ZERO object is the only object you will need to configure your controller. 
 
 ## 3. How to write gaze to file
 
