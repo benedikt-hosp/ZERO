@@ -21,9 +21,8 @@ Click on the image to see the video about how to add the script:
 5. [Call device specific calibration](#5-call-device-specific-calibration)
 6. [Device specific functions](#6-device-specific-functions)
 7. [How to add a new Eye-tracker to ZERO](#6-how-to-add-a-new-eye-tracker-to-zero)
-8. [How it works](#7-how-it-works)
-9. [Add new Events and Listeners](#9-add-new-events-and-listeners)
-10.[Reference](#10-reference)
+8. [Add new Events and Listeners](#8-add-new-events-and-listeners)
+9. [Reference](#9-reference)
 
 
 
@@ -79,14 +78,15 @@ etController.etpc.Calibrate()		// to call device specific calibration procedure 
 ```
 ## 6. Device specific functions
 
+XTAL		Calibrate Seating Position
+			Calibrate IPD
+
+
 
 ## 7. How to add a new Eye-tracker to ZERO
 
-## 8. How it works
 
-
-
-## 9. Add new Events and Listeners
+## 8. Add new Events and Listeners
 
 How to Add Event listeners:
 
@@ -162,7 +162,7 @@ to
 myObject.MyEvent += MyEvent_handlerMethod;
 ```
 
-## 10. Reference
+## 9. Reference
 
 If you use ZERO in your research, please cite the following paper: 
 
