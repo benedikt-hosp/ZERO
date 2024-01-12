@@ -1,17 +1,30 @@
 # ZERO: Eye Tracking Controller Interface for VR
 
-ZERO is an open-source eye-tracking controller interface designed for virtual reality applications. This README provides guidance on how to integrate and use ZERO in your VR projects.
-
-The main purpose of ZERO is to support scientist who want to do eye-tracking in virtual reality. 
+ZERO is an open-source eye-tracking controller interface designed for virtual reality applications. This README provides guidance on how to integrate and use ZERO in your VR projects. The main purpose of ZERO is to support scientist who want to do eye-tracking in virtual reality. 
 
 
 ## Table of Contents
-1. [EyeTracking Controller](#1-eyetracking-controller)
-2. [GazeWriter](#2-gazewriter)
-3. [Add new Events and Listeners](#3-add-new-events-and-listeners)
+1. [Choose Devices](#1.-eye-tracking-and-vr-devices)
+2. [How to access the controller]
+3. [How to write gaze to file]
+4. [Get Live Gaze signal]
+5. [Call device specific calibration]
+6. [How to add a new Eye-tracker to ZERO]
+7. [How it works]
 
 
-## EyeTracking Controller
+<!-- blank line -->
+Click on the image to see the video about how to add the script:
+
+[![Watch the video](https://img.youtube.com/vi/k842mTuHbdM/hqdefault.jpg)](https://youtu.be/k842mTuHbdM)
+
+<!-- blank line -->
+
+
+
+
+
+## 1. Eye-Tracking and VR devices
 ![If you choose to use the scripts by attaching them to a game object, you need to specify which VR Headset you use and which EyeTracker.](HowToFiles/ChooseProvider.png "Provider")
 
 
