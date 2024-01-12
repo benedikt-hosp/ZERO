@@ -101,7 +101,7 @@ void Update()
 }
 ```
 
-1. We have to define a delegate (which defines a callback or event listener ) somewhere public. 
+We have to define a delegate (which defines a callback or event listener ) somewhere public. 
 To have a tidy code, we add it to our "Delegates.cs"
 Let's call our delegate TrialEndedEvent_delegate, but you can name whatever you want.
 
@@ -109,7 +109,7 @@ Let's call our delegate TrialEndedEvent_delegate, but you can name whatever you 
 public delegate void TrialEndedEvent_delegate();
 ```
 
-2. We can only call events that are connected to a delegate. To create an event, 
+We can only call events that are connected to a delegate. To create an event, 
 we add it as a class member to a class in which the event will be raised.
 Our event has to have the type of the delegate we just created.
 
@@ -120,7 +120,7 @@ public event TrialEndedEvent_delegate TrialEndedEvent;
 Now we created an event we can raise when something happens.
 We also created a delegate that allows us to add listeners to that event.
 
-3. To add a listener to that event: Let's say we want to listen to that new event in our GazeWriter.
+To add a listener to that event: Let's say we want to listen to that new event in our GazeWriter.
 This time we have to add our listener inside the constructor of the class we want to handle the event.
 
 ```
@@ -134,7 +134,7 @@ public class GazeWriter
 	}
 }
 ```
-4. Create the handler method
+Create the handler method
 
 ```
 public void MyEvent_handlerMethod()
