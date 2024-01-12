@@ -44,14 +44,14 @@ The inspector view has the following options:
 
 If you want to have more control of what is happening when, you can use these functions to personalize ZERO to your needs.
 ```
-ZERO etController;							# create new object of ZERO by taking the ET provider from the public inspector variable.
+ZERO etController;							// create new object of ZERO by taking the ET provider from the public inspector variable.
 etController = new ZERO(Providers eyeTrackingProvider);		
 
-etController.StartET();							# start harvesting gaze samples from the device
-etController.StopET();							# stop harvesting et samples
-etController.CloseET();							# close all et processes and threads
-etControler.etpc.eyeTrackingProviderInterface;			# returns the singleton of the eye tracking device
-etControler.etpc.isCalibrated();				# Returns wether the eye tracker is calibrated or not
+etController.StartET();							// start harvesting gaze samples from the device
+etController.StopET();							// stop harvesting et samples
+etController.CloseET();							// close all et processes and threads
+etControler.etpc.eyeTrackingProviderInterface;	// returns the singleton of the eye tracking device
+etControler.etpc.isCalibrated();				// Returns wether the eye tracker is calibrated or not
 
 
 ```
@@ -75,7 +75,7 @@ This is done with an GazeWriter Object.
 
 ## 5. Call device specific calibration
 ```
-etController.etpc.Calibrate()		# to call device specific calibration procedure any time
+etController.etpc.Calibrate()		// to call device specific calibration procedure any time
 ```
 ## 6. Device specific functions
 
