@@ -60,21 +60,22 @@ etControler.etpc.isCalibrated();				# Returns wether the eye tracker is calibrat
 
 When you checked "Write gaze to file" checkbox in the inspector, ZERO takes care about saving gaze files for each user in the personal user folders.
 This is done with an GazeWriter Object.
+```
+   this.gazeWriter = new GazeWriter(userFolder, this, this.etController.getSetEyeTracker);      // GazeWriter constructor
 
-    * this.gazeWriter = new GazeWriter(userFolder, this, this.etController.getSetEyeTracker);      // GazeWriter constructor
-
-   * this.gazeWriter.startGazeWriting();                                                          // Start writing gaze samples to file
-   * this.gazeWriter.stopGazeWriting();                                                           // stop gaze writer and close file.
+   this.gazeWriter.startGazeWriting();                                                          // Start writing gaze samples to file
+   this.gazeWriter.stopGazeWriting();                                                           // stop gaze writer and close file.
+```
 
 ## 4. Get Live Gaze signal
-
-     * this.etController.getSetEyeTracker.ET_NewSampleAvailable_Event += GetCurrentGazeSignal;      // Register a method that is called when the eye tracker has a new sample
-
+```
+     this.etController.getSetEyeTracker.ET_NewSampleAvailable_Event += GetCurrentGazeSignal;      // Register a method that is called when the eye tracker has a new sample
+```
 
 ## 5. Call device specific calibration
-
+```
 etController.etpc.Calibrate()		# to call device specific calibration procedure any time
-
+```
 ## 6. Device specific functions
 
 
