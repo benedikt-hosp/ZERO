@@ -13,28 +13,18 @@ ZERO is an open-source eye-tracking controller interface designed for virtual re
 7. [How it works]
 
 
-<!-- blank line -->
-Click on the image to see the video about how to add the script:
-
-[![Watch the video](https://img.youtube.com/vi/k842mTuHbdM/hqdefault.jpg)](https://youtu.be/k842mTuHbdM)
-
-<!-- blank line -->
-
-
 
 
 
 ## 1. Eye-Tracking and VR devices
 ![If you choose to use the scripts by attaching them to a game object, you need to specify which VR Headset you use and which EyeTracker.](HowToFiles/ChooseProvider.png "Provider")
 
+Click on the image to see the video about how to add the script:
 
-### 1. Choose VR Provider / ET Provider
-### 2. How to access the controller
-### 3. How to write gaze to file
-### 4. Get Live Gaze signal
-### 5 . Call device specific calibration
+[![Watch the video](https://img.youtube.com/vi/k842mTuHbdM/hqdefault.jpg)](https://youtu.be/k842mTuHbdM)
 
-### 6. Example video
+
+
 <!-- blank line -->
 Click on the image to see the video about how to add the script:
 
@@ -43,10 +33,6 @@ Click on the image to see the video about how to add the script:
 <!-- blank line -->
 
 
-### 7. How to add a new Eye-tracker to ZERO
-### 8. How it works
-
-### 7. API
 
 ```
 ZERO etControler;											# create new object of ZERO
