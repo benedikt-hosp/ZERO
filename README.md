@@ -165,10 +165,10 @@ myObject.MyEvent += MyEvent_handlerMethod;
 If you use ZERO in your research, please cite the following paper: 
 
 @inproceedings{   
-	hosp2023zero,   
-	title={ZERO: A Generic Open-Source Extended Reality Eye-Tracking Controller Interface for Scientists},   
-	author={Hosp, Benedikt W and Wahl, Siegfried},   
-	booktitle={Proceedings of the 2023 Symposium on Eye Tracking Research and Applications},   
-	pages={1--4},   
-	year={2023}   
+	&nbsp; hosp2023zero,   
+	&nbsp; title={ZERO: A Generic Open-Source Extended Reality Eye-Tracking Controller Interface for Scientists},   
+	&nbsp; author={Hosp, Benedikt W and Wahl, Siegfried},   
+	&nbsp; booktitle={Proceedings of the 2023 Symposium on Eye Tracking Research and Applications},   
+	&nbsp; pages={1--4},   
+	&nbsp; year={2023}   
   }
