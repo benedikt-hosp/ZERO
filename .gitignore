@@ -1,4 +1,78 @@
+# --- Tooling / assistant files (never publish) ---
+.claude/
+CLAUDE.md
+.claude/settings.local.json
+CLAUDE.local.md
 
-Library/
+# --- Unity (standard) ---
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+[Uu]serSettings/
+[Mm]emoryCaptures/
+[Rr]ecordings/
 *.log
-*.log
+
+# --- IDE / OS ---
+.vs/
+.vscode/
+.idea/
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+*.apk
+*.aab
+*.unitypackage
+sysinfo.txt
+InitCodeMarker
+UnityLockfile
+Thumbs.db
+.DS_Store
+
+# --- Native binaries (third-party, load from vendor) ---
+*.dll
+*.so
+*.aar
+*.dylib
+
+# --- Study data (never commit): logs, questionnaires, recordings ---
+*TrialRecord*.csv
+*_TLX_*.csv
+[Ll]ogfiles/
+[Rr]esults/
+et-gaze.txt
+et-log.txt
+player-log.txt
+*.experiment
+*.vrexperiment
+
+# --- Third-party SDKs: obtain from the vendor, see README ("Third-party SDKs") ---
+**/Assets/Resources/EyeTrackingProviders/SuperRealityAnipal/ViveSR/
+**/Assets/Resources/EyeTrackingProviders/TobiiPro/*
+**/Assets/Resources/EyeTrackingProviders/TobiiXR/*
+**/Assets/Resources/EyeTrackingProviders/XTAL/vrgineers/*
+# ... but keep ZERO's own provider adapters
+!**/Assets/Resources/EyeTrackingProviders/**/*Provider.cs
+!**/Assets/Resources/EyeTrackingProviders/**/*Provider.cs.meta
+!**/Assets/Resources/EyeTrackingProviders/**/ET_NewSampleAvailable.cs
+!**/Assets/Resources/EyeTrackingProviders/**/ET_NewSampleAvailable.cs.meta
+**/Assets/Resources/SteamVR/
+**/Assets/SteamVR/
+**/Assets/StreamingAssets/SteamVR/
+**/Assets/Plugins/
+**/Assets/NuGet/
+**/Assets/HTC.UnityPlugin/
+**/TobiiEulaFile.asset*

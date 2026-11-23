@@ -1,4 +1,35 @@
-# ZERO: Eye Tracking Controller Interface for VR
+# ZERO
+
+A generic, open-source eye-tracking controller interface for Unity (VR/XR), written for researchers who want to record gaze with different headsets and eye trackers through one common API.
+
+- **Paper:** Hosp, B. W. and Wahl, S. (2023): *ZERO: A Generic Open-Source Extended Reality Eye-Tracking Controller Interface for Scientists*, Proceedings of the 2023 Symposium on Eye Tracking Research and Applications (ETRA). BibTeX: see [Reference](#9-reference).
+- **Status:** research code, not maintained. Issues and pull requests may not be answered.
+- **Unity version:** 2022.1.21f1 (project in `ZERO/`).
+- **License:** MIT, see [LICENSE](LICENSE). The license covers the code in this repository only, **not** the vendor SDKs below.
+
+## Third-party SDKs
+
+This repository contains only ZERO's own code, including the thin adapter scripts for each eye tracker
+(`*Provider.cs`). The vendor SDKs are **not** included, because their licenses do not allow redistribution
+(e.g. the Tobii Pro SDK End User License Agreement). Download them yourself from the vendor and copy them to the
+folders below (paths relative to `ZERO/Assets/`). Put the SDK files next to the adapter script that is already there.
+
+| Device / API | What to download (from the vendor) | Where to put it |
+|---|---|---|
+| Tobii Pro (screen-based and VR, Tobii Pro SDK) | Tobii Pro SDK for Unity (Tobii Pro Developer Zone) | `Resources/EyeTrackingProviders/TobiiPro/` (next to `TobiiProProvider.cs`) |
+| Tobii XR (Tobii XR SDK) | Tobii XR SDK Unity package (Tobii developer portal) | `Resources/EyeTrackingProviders/TobiiXR/` (next to `TobiiXRProvider.cs`; the SDK's `Runtime/` folder goes here) |
+| HTC Vive Pro Eye (SRanipal) | SRanipal / Vive Eye Tracking SDK (HTC Vive developer portal) | `Resources/EyeTrackingProviders/SuperRealityAnipal/ViveSR/` |
+| XTAL (VRgineers) | XTAL Unity plugin from VRgineers | `Resources/EyeTrackingProviders/XTAL/vrgineers/` (next to `XTALProvider.cs`) |
+| SteamVR / OpenVR | SteamVR Unity Plugin (Valve, <https://github.com/ValveSoftware/steamvr_unity_plugin>) | `Resources/SteamVR/` (the plugin also works from its default location `Assets/SteamVR/`) |
+
+Notes:
+
+- The SDK folders are listed in `.gitignore`, so you will not commit them by accident. Please keep it that way.
+- Tobii XR writes an EULA acceptance asset (`TobiiEulaFile.asset`) on first import. It is also ignored.
+- You only need the SDKs of the devices you actually use. If the project does not compile without the matching SDK, remove the provider you do not need (see `VendorList.cs`).
+- The helper scripts in `Notes/VR-Headsets/` start and stop vendor runtimes (SRanipal, Oculus, StarVR, XTAL, SteamVR). They need the corresponding vendor software installed and may require edits for your machine.
+
+## ZERO: Eye Tracking Controller Interface for VR (usage guide)
 
 ZERO is an open-source eye-tracking controller interface designed for virtual reality applications. This README provides guidance on how to integrate and use ZERO in your VR projects. The main purpose of ZERO is to support scientist who want to do eye-tracking in virtual reality. 
 
